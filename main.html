@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>job search</title>
+    <link rel="icon" href="icon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Ivory background: 255, 255, 240 */
+            background-color: rgb(255, 255, 240);
+        }
+
+        .search-container {
+            transition: all 0.2s ease;
+        }
+        
+        #loading-animation {
+            transition: opacity 0.3s ease;
+        }
+        
+        #logo-img {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <div class="absolute top-[50px] left-0 w-full md:top-10 md:left-10 md:w-32 md:z-10">
+        <div class="h-14 md:h-10 bg-red-500 md:bg-white/50 rounded-none flex items-center justify-center text-gray-400 font-bold text-[10px] md:text-xs tracking-widest uppercase mx-0 md:mx-0">
+            <img id="logo-img" src="logo.png" alt="Logo" class="w-full h-full object-contain object-center md:object-cover md:object-center block" loading="lazy">
+            <img id="loading-animation" src="Logo_Animation_Searching_Wave_Transition-ezgif.com-video-to-gif-converter.gif" alt="Loading" class="w-full h-full object-contain object-center md:object-cover md:object-center hidden">
+        </div>
+        <div class="md:hidden h-2 bg-red-500 w-full"></div>
+    </div>
+
+    <main class="flex-grow flex items-center justify-start md:justify-center p-4 md:p-12">
+        
+        <div class="w-full max-w-4xl mt-[206px] md:mt-0">
+            
+            
+            
+            <div class="search-container bg-white pt-[30px] pb-4 px-4 md:p-3 rounded-none border-[6px] border-gray-400 flex flex-col md:flex-row md:items-center gap-4 md:gap-2">
+                
+                <div class="flex-1 relative flex items-center border-b border-gray-100 md:border-b-0 md:border-r md:border-gray-200 pb-2 md:pb-0">
+                    <div class="absolute left-2 md:left-4 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="keyword-input"
+                        placeholder="Keywords, skills, or title" 
+                        class="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm md:text-base"
+                    >
+                </div>
+
+                
+                <div class="flex-1 relative flex items-center border-b border-gray-100 md:border-b-0 pb-2 md:pb-0">
+                    <div class="absolute left-2 md:left-4 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="location-input"
+                        placeholder="City, state, or zip" 
+                        class="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm md:text-base"
+                    >
+                </div>
+
+                
+                <button class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-semibold px-8 py-4 rounded-none flex items-center justify-center transition-all active:scale-95 group shrink-0">
+                    <span class="mr-2">Search</span>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const searchBtn = document.querySelector('button');
+        const logoImg = document.getElementById('logo-img');
+        const loadingAnimation = document.getElementById('loading-animation');
+        
+        searchBtn.addEventListener('click', async () => {
+            const keywordInput = document.getElementById('keyword-input');
+            const locationInput = document.getElementById('location-input');
+            
+            const keyword = keywordInput.value.trim();
+            const location = locationInput.value.trim();
+            
+            if (keyword || location) {
+                // Show loading animation and hide logo
+                logoImg.classList.add('hidden');
+                loadingAnimation.classList.remove('hidden');
+                
+                // Disable search button during loading
+                searchBtn.disabled = true;
+                searchBtn.style.opacity = '0.6';
+                searchBtn.style.cursor = 'not-allowed';
+                
+                try {
+                    const response = await fetch('/search', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            keyword: keyword,
+                            location: location
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.redirect) {
+                            // Keep loading animation visible during redirect
+                            window.location.href = data.redirect;
+                        }
+                    } else {
+                        // If error, restore logo
+                        logoImg.classList.remove('hidden');
+                        loadingAnimation.classList.add('hidden');
+                        searchBtn.disabled = false;
+                        searchBtn.style.opacity = '1';
+                        searchBtn.style.cursor = 'pointer';
+                    }
+                } catch (error) {
+                    console.error('Error submitting search:', error);
+                    // Restore logo on error
+                    logoImg.classList.remove('hidden');
+                    loadingAnimation.classList.add('hidden');
+                    searchBtn.disabled = false;
+                    searchBtn.style.opacity = '1';
+                    searchBtn.style.cursor = 'pointer';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
