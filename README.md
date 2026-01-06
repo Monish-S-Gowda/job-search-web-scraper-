@@ -1,4 +1,4 @@
-# Simple Flask backend
+
 
 This small Flask app serves `main.html` from the project root.
 
@@ -20,3 +20,4 @@ Scrape jobs from different websites.
 Setup LinkedIn job alerts.
 
 Add a resume-based job search.
+
