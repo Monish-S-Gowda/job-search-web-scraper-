@@ -12,3 +12,11 @@ python app.py
 ```
 
 Open http://localhost:5000/ in your browser.
+
+Further updates to be done
+
+Scrape jobs from different websites.
+
+Setup LinkedIn job alerts.
+
+Add a resume-based job search.
