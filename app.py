@@ -7,7 +7,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, static_folder=ROOT, static_url_path='', template_folder='templates')
 
 # Import the scraping function
-from job_scrape import get_jobs_for_web
+from naukri_scraper import scrape_naukri_jobs
 
 
 @app.route("/")
@@ -37,7 +37,7 @@ def results():
     location = request.args.get('location', '')
     
     # Scrape jobs using the function from job_scrape.py
-    jobs = get_jobs_for_web(keyword, location, limit=50)
+    jobs = scrape_naukri_jobs(keyword, location)
     
     # Debug: Log the number of jobs found
     import logging
